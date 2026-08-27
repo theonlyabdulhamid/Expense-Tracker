@@ -1,3 +1,5 @@
+import json
+
 expenses = []
 
 
@@ -18,7 +20,12 @@ def main():
 8. Exit
                 """
         print(menu)
-        choice = int(input("Choose an option: "))
+        choice = input("Choose an option: ").strip()
+        try:
+            choice = int(choice)
+        except ValueError:
+            print("Please enter a valid number")
+            continue
         if choice == 1:
             add_expense(expenses)
         elif choice == 2:
@@ -32,16 +39,30 @@ def main():
             for category, amount in category_totals.items():
                 print(f"{count}. {category} ---> {amount}")
                 count += 1
-        elif choice==5:
+        elif choice == 5:
             delete_expense(expenses)
+        elif choice == 6:
+            save_expenses(expenses)
+        elif choice == 7:
+            load_expenses(expenses)
         elif choice == 8:
             print("Goodbye!")
             break
+        else:
+            print("Please enter a valid number")
 
 
 def create_expense():
+    while True:
+        Amount = input("Amount: ").strip()
+        try:
+            Amount = int(Amount)
+            break
+        except ValueError:
+            print("please enter a valid amount")
+
     expense = {
-        "Amount": int(input("Amount: ")),
+        "Amount": Amount,
         "Category": input("Category: ").strip().capitalize(),
         "Description": input("Description: "),
     }
@@ -78,12 +99,48 @@ def spending_by_category(expenses):
             category[expense["Category"]] = expense["Amount"]
         else:
             category[expense["Category"]] += expense["Amount"]
+    if not category:
+        print("No expense record yet")
     return category
+
+
 def delete_expense(expenses):
-    if len(expenses)<=0:
+    if len(expenses) <= 0:
         print("No expense record yet")
         return
     view_expenses(expenses)
-    index= int(input("what expense do you want to delete? "))
-    expenses.pop(index-1)
+    try:
+        index = int(input("what expense do you want to delete? "))
+    except ValueError:
+        print("Please enter a valid number")
+        return
+    if (index <= len(expenses)) and index > 0:
+        expenses.pop(index - 1)
+    else:
+        print("Expense not found")
+
+
+def save_expenses(expenses):
+    if expenses:
+        with open("expenses.json", "w") as file:
+            json.dump(expenses, file)
+            print("Successfully saved")
+    else:
+        print("you cannot save an empty file")
+
+
+def load_expenses(expenses):
+    try:
+        with open("expenses.json", "r") as output:
+            loaded_expenses = json.load(output)
+            if loaded_expenses:
+                expenses.clear()
+                expenses.extend(loaded_expenses)
+                print("Expenses loaded successfully.")
+            else:
+                print("Empty expenses")
+    except FileNotFoundError:
+        print("No saved expenses found")
+
+
 main()
