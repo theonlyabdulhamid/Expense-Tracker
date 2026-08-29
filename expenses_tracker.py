@@ -61,18 +61,18 @@ def create_expense():
         except ValueError:
             print("please enter a valid amount")
     while True:
-        Category=input("Category: ").strip().capitalize()
-        if len(Category)>3:
+        Category = input("Category: ").strip().capitalize()
+        if len(Category) > 3:
             break
         else:
             print("Category must be above 3 letters")
     while True:
-        descrip=input("Description: ").strip().capitalize()
-        if len(descrip)>3:
+        descrip = input("Description: ").strip().capitalize()
+        if len(descrip) > 3:
             break
         else:
             print("Category must be above 3 letters")
-        
+
     expense = {
         "Amount": Amount,
         "Category": Category,
